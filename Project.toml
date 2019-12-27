@@ -4,4 +4,6 @@ authors = ["mickn"]
 version = "0.1.0"
 
 [deps]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+ScikitLearn = "3646fa90-6ef7-5e7e-9f22-8aca16db6324"
