@@ -2,7 +2,7 @@ using Plots, DataFrames, CSV
 using TSne
 # using ScikitLearn
 
-filepath = "data/dat41/191122_HK_real_svtlm.csv"
+filepath = "data/noname/191119_HK_real_svtlm.csv"
 
 tlm = CSV.read(filepath)
 tlm = dropmissing(tlm)      # 欠損地を含む行をデータから削除
@@ -22,18 +22,25 @@ for nm in tlmnm
     end
 end
 
+numerized_mc = tlm[!, tlmnm[4]]
+
 """
 説明変数のみを格納したDataFrameの作成
 """
 express = Matrix(tlm[7:end])
 pred = tsne(express)
 
-length(pred)
+# scatter(pred[:,1], pred[:,2])
 
-scatter(pred[:,1], pred[:,2])
-
-scatter(pred[findall(==(unique(mode_category)[1]), tlm[!, 4]), 1], pred[findall(==(unique(mode_category)[1]), tlm[!, 4]),2])
-scatter!(pred[findall(==(unique(mode_category)[2]), tlm[!, 4]), 1], pred[findall(==(unique(mode_category)[2]), tlm[!, 4]),2])
-scatter!(pred[findall(==(unique(mode_category)[3]), tlm[!, 4]), 1], pred[findall(==(unique(mode_category)[3]), tlm[!, 4]),2])
-
+function t_sne_scat()
+    scatter(pred[findall(==(unique(numerized_mc)[1]), tlm[!, 4]), 1], pred[findall(==(unique(numerized_mc)[1]), tlm[!, 4]),2],
+                markeralpha = 0.5,
+                markerstrokealpha = 0.,
+                )
+    [scatter!(pred[findall(==(unique(numerized_mc)[id]), tlm[!, 4]), 1],
+                pred[findall(==(unique(numerized_mc)[id]), tlm[!, 4]),2],
+                markeralpha = 0.5,
+                markerstrokealpha = 0.,) for id in 2:9][end]
+end
+t_sne_scat()
 
