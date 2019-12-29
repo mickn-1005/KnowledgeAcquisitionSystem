@@ -1,19 +1,11 @@
-using Plots, DataFrames, CSV, ScikitLearn
+using Plots, DataFrames, CSV#, ScikitLearn
 
 filepath = "data/dat41/191121_HK_real_svtlm.csv"
-
-# CSV.validate(filepath)
 
 tlm = CSV.read(filepath)
 tlmnm = names(tlm)
 
 k = unique(eltype.(eachcol(tlm)))
-# for types in k
-#     if Missing == types     # 欠損値が含まれないか確認
-#         println("hoge")
-#     end
-# end
-# unique(k)
 
 tlm[!,tlmnm[1]]
 
