@@ -13,7 +13,18 @@ k = unique(eltype.(eachcol(tlm)))
 
 tlm[!,tlmnm[1]]
 
-mode_category = tlm[!, tlmnm[4]]
+mode_category = unique(tlm[!, tlmnm[4]])
+
+# Dirtyなデータの消去
+delcat = [1,2,4,5,7,8,9]
+
+tlm = tlm[findall(!=(mode_category[1]), tlm[4]),:]
+tlm = tlm[findall(!=(mode_category[2]), tlm[4]),:]
+tlm = tlm[findall(!=(mode_category[4]), tlm[4]),:]
+tlm = tlm[findall(!=(mode_category[5]), tlm[4]),:]
+tlm = tlm[findall(!=(mode_category[7]), tlm[4]),:]
+tlm = tlm[findall(!=(mode_category[8]), tlm[4]),:]
+tlm = tlm[findall(!=(mode_category[9]), tlm[4]),:]
 
 function enum_modeid(tlm, tlmnm)
     for nm in tlmnm
@@ -40,7 +51,9 @@ tlm = df_scale(tlm)
 """
 説明変数のみを格納したDataFrameの作成
 """
-express = Matrix(tlm[7:end])
+# express = Matrix(tlm)
+# express = Matrix(tlm[7:end])
+express = Matrix(tlm[55:end])
 pred = tsne(express)
 # pred = tsne(express, 3)
 
@@ -49,11 +62,14 @@ function tsne_scat2()
                 pred[findall(==(unique(numerized_mc)[1]), tlm[!, 4]),2],
                 markeralpha = 0.5,
                 markerstrokealpha = 0.,
+                # label=mode_category[1]
                 )
     [scatter!(pred[findall(==(unique(numerized_mc)[id]), tlm[!, 4]), 1],
                 pred[findall(==(unique(numerized_mc)[id]), tlm[!, 4]),2],
                 markeralpha = 0.5,
-                markerstrokealpha = 0.,) for id in 2:9][end]
+                markerstrokealpha = 0.,
+                # label=mode_category[id]
+                ) for id in 2:2][end]
 end
 function tsne_scat3()
     scatter(pred[findall(==(unique(numerized_mc)[1]), tlm[!, 4]), 1], 
