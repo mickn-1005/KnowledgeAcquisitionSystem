@@ -45,29 +45,50 @@ function df_scale(df)
 end
 tlm = df_scale(tlm)
 
-"""ランダムにDataFrameからデータ抽出"""
 minibatch(tlm, n=N_SAMPLE) = tlm[sample(1:size(tlm)[1], n, replace=false), :]
+
+# const EXPL = 1:size(testset)[2]
+# const EXPL = 7:size(testset)[2]
+const EXPL = [i for i in 55:size(tlm)[2]]
+
 testset = minibatch(tlm)
 
-# 説明変数の列（説明変数のPruningを乱択するため）
-nmarr = sample(tlmnm, length(tlmnm), replace=false)
-
-# ind = 1:size(testset)[2]
-# ind = 7:size(testset)[2]
-ind = 55:size(testset)[2]
-df_tsne(testset, indices) = tsne(Matrix(testset[indices]))
-pred = DataFrame(df_tsne(testset, ind))
+df_tsne(testset) = DataFrame(tsne(Matrix(testset)))
+pred = df_tsne(testset[EXPL])
 
 """結果の評価として，各クラスタの重心（2d前提）を計算"""
-cog(pred, tlm, mcind) = describe(pred[findall(==(ENUM_MC[mcind]), tlm[!, 4]),:], :mean)
+cog(pred, tlm, mcind) = describe(pred[findall(==(mcind), tlm[!, 4]),:], :mean)
 
 """重心に対してまとまりの良さを平均２乗誤差で判定"""
 euc_msqerr_(pred, tlm, mdid, cog, xy) = (pred[findall(==(mdid), tlm[!, 4]), xy] .- cog[xy,2]).^2
 euc_msqerr(pred, tlm, mdid, cog) = sum(euc_msqerr_(pred, tlm, mdid, cog, 1)) + sum(euc_msqerr_(pred, tlm, mdid, cog, 2))
-[euc_msqerr(pred, testset, mdid, cog(pred, testset, mdid)) for mdid in unique(testset[4])]
+evalf(pred, tlm) = sum([euc_msqerr(pred, tlm, mdid, cog(pred, tlm, mdid)) for mdid in unique(tlm[4])])
+
+evalf(pred, testset)
+
+function pruning_expl(tlm)
+    """ランダムにDataFrameからデータ抽出"""
+    testset = minibatch(tlm)
+    ind = EXPL          # 初期化
+
+    # 説明変数の列（説明変数のPruningを乱択するため）
+    nmarr = sample(EXPL, length(EXPL), replace=false)
+    for nmid in nmarr
+        println(nmid)
+        ind = sort(union(ind, [nmid]))
+        if evalf(df_tsne(testset[ind]), testset) > evalf(df_tsne(testset[symdiff(ind, nmid)]), testset)
+            println("drop id:  ", nmid)
+            ind = symdiff(ind, nmid)
+        end
+    end
+    return df_tsne(tlm), ind
+end
+
+
+result, pruned = pruning_expl(tlm)
 
 function tsne_scat2(pred, tlm, indices)
-    scatter(pred[findall(==(indices[1]), tlm[!, 4]), 1], 
+    scatter(pred[findall(==(indices[1]), tlm[!, 4]), 1],
                 pred[findall(==(indices[1]), tlm[!, 4]),2],
                 markeralpha = 0.5,
                 markerstrokealpha = 0.,
@@ -80,21 +101,4 @@ function tsne_scat2(pred, tlm, indices)
                 # label=mode_category[id]
                 ) for id in indices[2:end]][end]        # 配列の最後をReturnすることによって，全てが描写されたPlotを返せる．
 end
-function tsne_scat3()
-    scatter(pred[findall(==(ENUM_MC[1]), tlm[!, 4]), 1],
-                pred[findall(==(unique(numerized_mc)[1]), tlm[!, 4]),2],
-                pred[findall(==(unique(numerized_mc)[1]), tlm[!, 4]),3],
-                markeralpha = 0.5,
-                markerstrokealpha = 0.,
-                )
-    [scatter!(pred[findall(==(ENUM_MC[id]), tlm[!, 4]), 1],
-                pred[findall(==(ENUM_MC[id]), tlm[!, 4]),2],
-                pred[findall(==(ENUM_MC[id]), tlm[!, 4]),3],
-                markeralpha = 0.5,
-                markerstrokealpha = 0.,) for id in 2:9][end]
-end
 tsne_scat2(pred, testset, unique(testset[4]))
-# tsne_scat3()
-
-"""main"""
-# CSVの読み込みとデータの整形
