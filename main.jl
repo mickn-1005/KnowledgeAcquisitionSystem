@@ -1,10 +1,10 @@
-using Plots, DataFrames, CSV, Random, StatsBase
+using Plots, DataFrames, CSV, Random, StatsBase#, ProgressBar
 using TSne
 # using ScikitLearn
 Random.seed!(123)
 
-const N_SAMPLE = 500
-const CATEGORY = [1,2,4,5,7,8,9]
+const N_SAMPLE = 1000
+const CATEGORY = [1,2,7,8,9]
 
 const filepath = "data/noname/191119_HK_real_svtlm.csv"
 
@@ -49,11 +49,12 @@ minibatch(tlm, n=N_SAMPLE) = tlm[sample(1:size(tlm)[1], n, replace=false), :]
 
 # const EXPL = 1:size(testset)[2]
 # const EXPL = 7:size(testset)[2]
-const EXPL = [i for i in 55:size(tlm)[2]]
+# const EXPL = 55:size(testset)[2]
+const EXPL = [i for i in 7:size(tlm)[2]]
 
 testset = minibatch(tlm)
 
-df_tsne(testset) = DataFrame(tsne(Matrix(testset)))
+df_tsne(testset) = DataFrame(tsne(Matrix(testset), progress=false))
 pred = df_tsne(testset[EXPL])
 
 """結果の評価として，各クラスタの重心（2d前提）を計算"""
@@ -66,26 +67,39 @@ evalf(pred, tlm) = sum([euc_msqerr(pred, tlm, mdid, cog(pred, tlm, mdid)) for md
 
 evalf(pred, testset)
 
-function pruning_expl(tlm)
-    """ランダムにDataFrameからデータ抽出"""
-    testset = minibatch(tlm)
-    ind = EXPL          # 初期化
-
+function pruning_expl(tlm, ind)
     # 説明変数の列（説明変数のPruningを乱択するため）
     nmarr = sample(EXPL, length(EXPL), replace=false)
     for nmid in nmarr
+        """ランダムにDataFrameからデータ抽出"""
+        testset = minibatch(tlm)
         println(nmid)
         ind = sort(union(ind, [nmid]))
-        if evalf(df_tsne(testset[ind]), testset) > evalf(df_tsne(testset[symdiff(ind, nmid)]), testset)
-            println("drop id:  ", nmid)
-            ind = symdiff(ind, nmid)
+        try
+            w = evalf(df_tsne(testset[ind]), testset)
+            wo =evalf(df_tsne(testset[symdiff(ind, nmid)]), testset)
+            if w > wo
+                # println("drop id:  ", nmid)
+                ind = symdiff(ind, nmid)
+            end
+        catch
+            println("cannot convert t-sne...")
+            continue
         end
     end
+    # println("validate...")
     return df_tsne(tlm), ind
 end
 
-
-result, pruned = pruning_expl(tlm)
+function randompruning()
+    epoch = 10
+    result, ind = pruning_expl(tlm, EXPL)
+    for t in 1:epoch
+        println(t, " th epoch. number of explanation parameter = ", length(ind))
+        result, ind = pruning_expl(tlm, ind)
+    end
+    return result, ind
+end
 
 function tsne_scat2(pred, tlm, indices)
     scatter(pred[findall(==(indices[1]), tlm[!, 4]), 1],
@@ -93,12 +107,15 @@ function tsne_scat2(pred, tlm, indices)
                 markeralpha = 0.5,
                 markerstrokealpha = 0.,
                 # label=mode_category[1]
-                )
+                label=MODE_CATEGORY[indices[1]])
     [scatter!(pred[findall(==(id), tlm[!, 4]), 1],
                 pred[findall(==(id), tlm[!, 4]),2],
                 markeralpha = 0.5,
                 markerstrokealpha = 0.,
-                # label=mode_category[id]
+                label=MODE_CATEGORY[indices[1]]
                 ) for id in indices[2:end]][end]        # 配列の最後をReturnすることによって，全てが描写されたPlotを返せる．
 end
+
+r,i = randompruning()
+tsne_scat2(r, tlm, unique(tlm[4]))
 tsne_scat2(pred, testset, unique(testset[4]))
