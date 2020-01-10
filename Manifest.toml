@@ -59,9 +59,9 @@ version = "0.5.1"
 
 [[CategoricalArrays]]
 deps = ["Compat", "DataAPI", "Future", "JSON", "Missings", "Printf", "Reexport", "Statistics", "Unicode"]
-git-tree-sha1 = "9127b0c2ee1bfd810921dd688dd8d73be1d9fb57"
+git-tree-sha1 = "7c4419347d724a057b5a550078f8ff4cdfdeedf6"
 uuid = "324d7699-5711-5eae-9e2f-1d82baa6b597"
-version = "0.7.5"
+version = "0.7.6"
 
 [[Clustering]]
 deps = ["Distances", "LinearAlgebra", "NearestNeighbors", "Printf", "SparseArrays", "Statistics", "StatsBase"]
@@ -83,9 +83,9 @@ version = "0.9.0"
 
 [[Colors]]
 deps = ["ColorTypes", "FixedPointNumbers", "InteractiveUtils", "Printf", "Reexport"]
-git-tree-sha1 = "288e7a907bd993d50f5664e8e4fcddb9a3107039"
+git-tree-sha1 = "177d8b959d3c103a6d57574c38ee79c81059c31b"
 uuid = "5ae59095-9a9b-59fe-a467-6f913c188581"
-version = "0.11.1"
+version = "0.11.2"
 
 [[CommonSubexpressions]]
 deps = ["Test"]
@@ -118,9 +118,9 @@ version = "0.20.0"
 
 [[DataStructures]]
 deps = ["InteractiveUtils", "OrderedCollections"]
-git-tree-sha1 = "a1b652fb77ae8ca7ea328fa7ba5aa151036e5c10"
+git-tree-sha1 = "f784254f428fb8fd7ac15982e5862a38a44523d3"
 uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
-version = "0.17.6"
+version = "0.17.7"
 
 [[DataValueInterfaces]]
 git-tree-sha1 = "bfc1187b79289637fa0ef6d4436ebdfe6905cbd6"
@@ -133,9 +133,9 @@ uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 
 [[DecisionTree]]
 deps = ["DelimitedFiles", "Distributed", "LinearAlgebra", "Random", "ScikitLearnBase", "Statistics", "Test"]
-git-tree-sha1 = "ebfc0c85eaaf08f474f674e8138a2bc55257454f"
+git-tree-sha1 = "5438720dcf461b52f3cab3db4be56142910e28b5"
 uuid = "7806a523-6efd-50cb-b5f6-3fa6f1930dbb"
-version = "0.10.0"
+version = "0.10.1"
 
 [[DelimitedFiles]]
 deps = ["Mmap"]
@@ -171,9 +171,9 @@ uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[Distributions]]
 deps = ["FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SpecialFunctions", "Statistics", "StatsBase", "StatsFuns"]
-git-tree-sha1 = "860962bb355c97afdd7f9529cee7f26333401231"
+git-tree-sha1 = "743809ded6db3a3145565a71ee9c8b23f3a4c463"
 uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
-version = "0.21.11"
+version = "0.22.0"
 
 [[EzXML]]
 deps = ["BinaryProvider", "Libdl", "Printf"]
@@ -206,9 +206,9 @@ uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
 version = "0.8.2"
 
 [[FixedPointNumbers]]
-git-tree-sha1 = "bd1386f890e172ef38e1c735cda58cbf004a7c9a"
+git-tree-sha1 = "4aaea64dd0c30ad79037084f8ca2b94348e65eaa"
 uuid = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
-version = "0.7.0"
+version = "0.7.1"
 
 [[ForwardDiff]]
 deps = ["CommonSubexpressions", "DiffResults", "DiffRules", "NaNMath", "Random", "SpecialFunctions", "StaticArrays"]
